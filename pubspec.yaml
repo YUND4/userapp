@@ -5,14 +5,17 @@ version: 1.0.0+1
 environment:
   sdk: ">=2.7.0 <3.0.0"
 dependencies:
-  flutter_feather_icons: ^1.0.3
   flutter:
     sdk: flutter
+  flutter_feather_icons: ^1.0.3
   flutter_svg: ^0.19.0
   cupertino_icons: ^1.0.0
   rxdart: ^0.24.1
+  graphql_flutter: ^3.1.0
+  json_serializable: ^3.5.0
 
 dev_dependencies:
+  build_runner: ^1.10.3
   flutter_test:
     sdk: flutter
 flutter:
