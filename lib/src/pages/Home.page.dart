@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                 child: ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return _contact();
+                    return _contact(user: snapshot.data[index] as User);
                   },
                 ),
               ),
@@ -98,19 +98,7 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  Widget _compileContact({List data}) {
-    List<Widget> toColumn = [];
-    data.forEach((element) {
-      toColumn.add(
-        _contact(),
-      );
-    });
-    return ListView(
-      children: toColumn,
-    );
-  }
-
-  Widget _contact() => Card(
+  Widget _contact({User user}) => Card(
         color: HexColor('#FFF4D6'),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
@@ -120,7 +108,7 @@ class _HomePageState extends State<HomePage> {
         child: Row(
           children: [
             _expandedImage(image: 'Imagen 1.png'),
-            _expandedText(),
+            _expandedText(user: user),
             _iconButton(callback: () {})
           ],
         ),
@@ -142,7 +130,8 @@ class _HomePageState extends State<HomePage> {
         ),
       );
 
-  Widget _expandedText({int flex = 6, String name, String, username}) =>
+  Widget _expandedText(
+          {int flex = 6, String name, String, username, User user}) =>
       Expanded(
         flex: 4,
         child: Column(
@@ -153,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                   width: 15,
                 ),
                 Text(
-                  'JORGE ROBLES',
+                  user?.name ?? 'JORGE ROBLES',
                   style: Theme.of(context).textTheme.bodyText2,
                 ),
               ],
@@ -164,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                   width: 15,
                 ),
                 Text(
-                  'Gatitotraviso04',
+                  user?.username ?? 'Gatitotraviso04',
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
               ],
