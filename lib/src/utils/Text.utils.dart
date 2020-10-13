@@ -4,7 +4,11 @@ import 'HexColor.util.dart';
 
 class TextThemeCustom extends TextTheme {
   @override
-  TextStyle headline1 = TextStyle(fontFamily: font);
+  TextStyle headline1 = TextStyle(
+      fontFamily: font,
+      fontWeight: FontWeight.bold,
+      fontSize: 35,
+      color: Colors.black);
   @override
   TextStyle headline2 = TextStyle(
       fontFamily: font,
@@ -37,13 +41,31 @@ class TextThemeCustom extends TextTheme {
     color: HexColor('#FEDD7C'),
   );
   @override
-  TextStyle subtitle1 = TextStyle(fontFamily: font);
+  TextStyle subtitle1 = TextStyle(
+    fontFamily: font,
+    fontSize: 8,
+    color: Colors.black,
+  );
   @override
-  TextStyle subtitle2 = TextStyle(fontFamily: font);
+  TextStyle subtitle2 = TextStyle(
+    fontFamily: font,
+    fontSize: 8,
+    color: Colors.black,
+  );
   @override
-  TextStyle bodyText1 = TextStyle(fontFamily: font);
+  TextStyle bodyText1 = TextStyle(
+    fontFamily: font,
+    fontSize: 19,
+    fontWeight: FontWeight.bold,
+    color: Colors.black,
+  );
   @override
-  TextStyle bodyText2 = TextStyle(fontFamily: font);
+  TextStyle bodyText2 = TextStyle(
+    fontFamily: font,
+    fontSize: 10,
+    fontWeight: FontWeight.bold,
+    color: Colors.black,
+  );
 
   static String get font => 'Monserrat';
 }

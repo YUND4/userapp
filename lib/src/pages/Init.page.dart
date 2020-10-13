@@ -6,8 +6,6 @@ class InitPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Container(
           color: HexColor('#FEDD7C'),
           child: Stack(
@@ -48,7 +46,7 @@ class InitPage extends StatelessWidget {
                           child: RaisedButton(
                             color: HexColor('#1A1A1A'),
                             onPressed: () =>
-                                {Navigator.pushNamed(context, 'login')},
+                                Navigator.pushNamed(context, 'login'),
                             child: Text(
                               'IR A LOGIN',
                               style: Theme.of(context).textTheme.headline3,
@@ -74,7 +72,7 @@ class InitPage extends StatelessWidget {
                     top: MediaQuery.of(context).size.height / 1.1),
                 alignment: Alignment.bottomCenter,
                 child: Image.asset(
-                  'assets/download.png',
+                  'assets/images/download.png',
                   centerSlice: Rect.zero,
                 ),
               )
