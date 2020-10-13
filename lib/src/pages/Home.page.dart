@@ -84,7 +84,16 @@ class _HomePageState extends State<HomePage> {
               ],
             );
           } else {
-            return _compileContact(data: snapshot.data);
+            return Expanded(
+              child: Container(
+                child: ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return _contact();
+                  },
+                ),
+              ),
+            );
           }
         });
   }
