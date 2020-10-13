@@ -43,8 +43,6 @@ class TextThemeCustom extends TextTheme {
   @override
   TextStyle subtitle1 = TextStyle(
     fontFamily: font,
-    fontSize: 8,
-    color: Colors.black,
   );
   @override
   TextStyle subtitle2 = TextStyle(
