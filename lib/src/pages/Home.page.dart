@@ -109,23 +109,15 @@ class _HomePageState extends State<HomePage> {
           children: [
             _expandedImage(image: 'Imagen 1.png'),
             _expandedText(user: user),
-            _iconButton(callback: () {})
-          ],
-        ),
-      );
-
-  Widget _contactLoading() => Card(
-        color: HexColor('#FFF4D6'),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-        ),
-        child: Row(
-          children: [
-            _expandedImage(image: 'Imagen 1.png'),
-            _expandedText(),
-            _iconButton(callback: () {})
+            _iconButton(callback: () {
+              Navigator.pushNamed(
+                context,
+                'map',
+                arguments: {
+                  'model': user,
+                },
+              );
+            })
           ],
         ),
       );

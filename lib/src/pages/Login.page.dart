@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:userapp/src/Services/Queries.service.dart';
 import 'package:userapp/src/Services/Users.service.dart';
@@ -174,6 +175,16 @@ class _LoginPageState extends State<LoginPage> {
                 hintText: hint,
               ),
               obscureText: pass,
+              onChanged: (v) {
+                _formKey.currentState.validate();
+              },
+              validator: (v) {
+                if (v == null || v == '') {
+                  return 'Este campo es obligatorio';
+                } else {
+                  return null;
+                }
+              },
             ),
           ),
           SizedBox(
@@ -182,20 +193,43 @@ class _LoginPageState extends State<LoginPage> {
         ],
       );
 
-  void _onSubmit() {
-    Future.sync(() async {
-      var result = await UserService.getContacts();
-      if (result.hasException) {
-        _openTooltip(message: 'Error: ${result.exception}');
-      } else if (result.loading && result.data == null) {
-        _openTooltip(message: 'Credenciales incorrectas');
+  Future<bool> _validate() async {
+    if (_formKey.currentState.validate()) {
+      LocationPermission permission = await checkPermission();
+      if (permission != LocationPermission.denied ||
+          permission != LocationPermission.deniedForever) {
+        return true;
       } else {
-        if (_login(data: result.data))
-          Navigator.pushNamed(context, 'home');
-        else
-          _openTooltip(message: 'Credenciales incorrectas');
+        LocationPermission permission = await requestPermission();
+        if (permission == LocationPermission.always) {
+          return true;
+        } else {
+          return false;
+        }
       }
-    });
+    } else {
+      return false;
+    }
+  }
+
+  void _onSubmit() {
+    Future.sync(
+      () async {
+        if (await _validate()) {
+          var result = await UserService.getContacts();
+          if (result.hasException) {
+            _openTooltip(message: 'Error: ${result.exception}');
+          } else if (result.loading && result.data == null) {
+            _openTooltip(message: 'Credenciales incorrectas');
+          } else {
+            if (_login(data: result.data))
+              Navigator.pushNamed(context, 'home');
+            else
+              _openTooltip(message: 'Credenciales incorrectas');
+          }
+        }
+      },
+    );
   }
 
   bool _login({Map data}) {
