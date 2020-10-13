@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:userapp/src/Blocs/TypedBloc.bloc.dart';
+import 'package:userapp/src/Services/Users.service.dart';
+import 'package:userapp/src/models/User/User.model.dart';
 import 'package:userapp/src/utils/AppBarMenu.utils.dart';
 import 'package:userapp/src/utils/HexColor.util.dart';
 
@@ -10,6 +12,37 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Bloc<List> _contacts = Bloc<List>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    _loadContacts();
+    super.initState();
+  }
+
+  void _loadContacts() {
+    Future.sync(() async {
+      var result = await UserService.getContacts();
+      if (result.hasException) {
+        _openTooltip(message: 'Error: ${result.exception}');
+      } else if (result.loading && result.data == null) {
+        _openTooltip(message: 'Ningun resultado');
+      } else {
+        setState(() {
+          _contacts.sink(
+              result.data['users']['data'].map((e) => User.json(e)).toList());
+        });
+      }
+    });
+  }
+
+  void _openTooltip({String message}) {
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +84,21 @@ class _HomePageState extends State<HomePage> {
               ],
             );
           } else {
-            return Opacity(opacity: 1.0);
+            return _compileContact(data: snapshot.data);
           }
         });
+  }
+
+  Widget _compileContact({List data}) {
+    List<Widget> toColumn = [];
+    data.forEach((element) {
+      toColumn.add(
+        _contact(),
+      );
+    });
+    return ListView(
+      children: toColumn,
+    );
   }
 
   Widget _contact() => Card(

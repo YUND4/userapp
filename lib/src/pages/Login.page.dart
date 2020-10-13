@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:userapp/src/Services/Queries.service.dart';
+import 'package:userapp/src/Services/Users.service.dart';
+import 'package:userapp/src/models/User/User.model.dart';
 import 'package:userapp/src/utils/HexColor.util.dart';
 
 class LoginPage extends StatefulWidget {
@@ -9,10 +13,14 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
+  final _userController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Container(
         child: Stack(
           children: [
@@ -62,11 +70,20 @@ class _LoginPageState extends State<LoginPage> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      _field(hint: 'Username', icon: FeatherIcons.user),
+                      _field(
+                        hint: 'Username',
+                        icon: FeatherIcons.user,
+                        controller: _userController,
+                      ),
                       SizedBox(
                         height: 25,
                       ),
-                      _field(hint: 'Password', icon: FeatherIcons.lock),
+                      _field(
+                        hint: 'Password',
+                        icon: FeatherIcons.lock,
+                        controller: _passwordController,
+                        pass: true,
+                      ),
                       SizedBox(
                         height: 35,
                       ),
@@ -98,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
               height: 49,
               child: RaisedButton(
                 color: HexColor('#FEDD7C'),
-                onPressed: () => {Navigator.pushNamed(context, 'home')},
+                onPressed: _onSubmit,
                 child: Text(
                   'SIGN IN',
                   style: Theme.of(context).textTheme.headline3,
@@ -132,7 +149,12 @@ class _LoginPageState extends State<LoginPage> {
         ],
       );
 
-  Widget _field({String hint, IconData icon}) => Row(
+  Widget _field(
+          {String hint,
+          IconData icon,
+          TextEditingController controller,
+          bool pass = false}) =>
+      Row(
         children: [
           Expanded(
             flex: 1,
@@ -147,9 +169,11 @@ class _LoginPageState extends State<LoginPage> {
           Expanded(
             flex: 5,
             child: TextFormField(
+              controller: controller,
               decoration: InputDecoration(
                 hintText: hint,
               ),
+              obscureText: pass,
             ),
           ),
           SizedBox(
@@ -157,4 +181,41 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       );
+
+  void _onSubmit() {
+    Future.sync(() async {
+      var result = await UserService.getContacts();
+      if (result.hasException) {
+        _openTooltip(message: 'Error: ${result.exception}');
+      } else if (result.loading && result.data == null) {
+        _openTooltip(message: 'Credenciales incorrectas');
+      } else {
+        if (_login(data: result.data))
+          Navigator.pushNamed(context, 'home');
+        else
+          _openTooltip(message: 'Credenciales incorrectas');
+      }
+    });
+  }
+
+  bool _login({Map data}) {
+    dynamic list =
+        (data['users']['data'] as List).map((e) => User.json(e)).toList();
+    list = list.where((element) {
+      if (element.username == _userController.text &&
+          element.phone == _passwordController.text)
+        return true;
+      else
+        return false;
+    });
+    return list.isNotEmpty;
+  }
+
+  void _openTooltip({String message}) {
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
 }
